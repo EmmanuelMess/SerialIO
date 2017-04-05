@@ -27,24 +27,21 @@ public class Main {
 				c.error("Falló al enviar (" + e.getLocalizedMessage() + ")");
 			}
         });
-        c.display();
-        initCOMMs();
+        c.preDisplay((com1, com2) -> {
+        	c.display();
+        	initCOMMs(com1, com2);
+        });
 	}
     
-    private static void initCOMMs() {
+    private static void initCOMMs(String com1, String com2) {
     	// getting serial ports list into the array
     	String[] portNames = SerialPortList.getPortNames();
     	        
     	if (portNames.length == 0) {
     	    c.error("There are no serial ports");
-    	} else {
-	    	StringBuilder s = new StringBuilder("Puertos abiertos: ");
-	    	for (int i = 0; i < portNames.length; i++)
-	    	    s.append(portNames[i] + ", ");
-		    c.msg(s.delete(s.length()-2, s.length()).toString());
     	}
     	
-    	serialPort = new SerialPort("COM1");
+    	serialPort = new SerialPort(com1);
 	    try {
 	        serialPort.openPort();
 	
@@ -59,7 +56,7 @@ public class Main {
 	    	c.error("There are an error on writing string to port: \n\t" + ex);
 	    }
 	    
-    	serialPort1 = new SerialPort("COM2");
+    	serialPort1 = new SerialPort(com2);
 	    try {
 	    	serialPort1.openPort();
 	

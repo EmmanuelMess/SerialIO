@@ -4,9 +4,12 @@ import java.awt.BorderLayout;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.Insets;
+
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -21,14 +24,51 @@ import javax.swing.border.EmptyBorder;
 public class ChatGUI {
 
     private Sender l;
-    private JFrame newFrame;
+    private JFrame firstFrame, newFrame;
     private JButton sendMessage;
     private JTextField messageBox;
     private JTextArea chatBox;
     
     public ChatGUI(String appName, Sender l) {
+    	firstFrame = new JFrame("Puertos [COMx]");
     	newFrame = new JFrame(appName);
     	this.l = l;
+    }
+    
+    public void preDisplay(OnEnd end) {
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BorderLayout());
+
+        JLabel lCom1 = new JLabel("Puerto para enviar:"), lCom2 = new JLabel("Puerto a escuchar:");
+        JTextField com1 = new JTextField("COM1", 5), com2 = new JTextField("COM2", 5);
+        JPanel center = new JPanel(); 
+        center.setLayout(new GridLayout(2, 2, 5, 5));
+        center.add(lCom1, 0, 0);
+        center.add(com2, 0, 1);
+        center.add(lCom2, 1, 0);
+        center.add(com1, 1, 1);
+        center.setBorder(new EmptyBorder(5, 5, 5, 5));
+        
+        JButton start = new JButton("Iniciar");
+        start.addActionListener((event) -> {
+        	firstFrame.dispose();
+            end.ended(com1.getText(), com2.getText());
+        });
+        
+        mainPanel.add(center, BorderLayout.CENTER);
+        mainPanel.add(start, BorderLayout.SOUTH);
+        mainPanel.setBorder(new EmptyBorder(5, 5, 5, 5));
+        
+        firstFrame.add(mainPanel);
+        firstFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        firstFrame.pack();
+        firstFrame.setVisible(true);
+        
+        com1.requestFocusInWindow();
+    }
+    
+    interface OnEnd{
+    	public void ended(String com1, String com2);
     }
 
     public void display() {
