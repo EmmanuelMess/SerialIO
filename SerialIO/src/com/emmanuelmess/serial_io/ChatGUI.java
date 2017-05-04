@@ -8,6 +8,7 @@ import java.awt.GridLayout;
 import java.awt.Insets;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -39,20 +40,44 @@ public class ChatGUI {
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BorderLayout());
 
-        JLabel lCom1 = new JLabel("Puerto para enviar:"), lCom2 = new JLabel("Puerto a escuchar:");
+        JLabel lCom1 = new JLabel("Puerto para enviar:"), lCom2 = new JLabel("Puerto a escuchar:"), 
+        		lBaudrates = new JLabel("Baudaje:"), lBits = new JLabel("Bits:"),
+        		lStopbits = new JLabel("Bits de parada:"), lParity = new JLabel("Paridad:");
         JTextField com1 = new JTextField("COM1", 5), com2 = new JTextField("COM2", 5);
+        
+        JComboBox<String> baudratesCombo = new JComboBox<String>(Main.BAUDRATES_NAMES);
+        baudratesCombo.setSelectedIndex(5);
+        JComboBox<String> bitsCombo = new JComboBox<String>(Main.BITS_NAMES);
+        bitsCombo.setSelectedIndex(3);
+        JComboBox<String> stopbitsCombo = new JComboBox<String>(Main.STOPBITS_NAMES);
+        stopbitsCombo.setSelectedIndex(0);
+        JComboBox<String> parityCombo = new JComboBox<String>(Main.PARITY_NAMES);
+        parityCombo.setSelectedIndex(0);
+        
         JPanel center = new JPanel(); 
-        center.setLayout(new GridLayout(2, 2, 5, 5));
-        center.add(lCom1, 0, 0);
-        center.add(com2, 0, 1);
-        center.add(lCom2, 1, 0);
-        center.add(com1, 1, 1);
+        center.setLayout(new GridLayout(6, 2, 5, 5));
+        center.add(lCom1);
+        center.add(com2);
+        center.add(lCom2);
+        center.add(com1);
+
+        center.add(lBaudrates);
+        center.add(baudratesCombo);
+        center.add(lBits);
+        center.add(bitsCombo);
+        center.add(lStopbits);
+        center.add(stopbitsCombo);
+        center.add(lParity);
+        center.add(parityCombo);
+        
         center.setBorder(new EmptyBorder(5, 5, 5, 5));
         
         JButton start = new JButton("Iniciar");
         start.addActionListener((event) -> {
         	firstFrame.dispose();
-            end.ended(com1.getText(), com2.getText());
+            end.ended(baudratesCombo.getSelectedIndex(), bitsCombo.getSelectedIndex(), 
+            		stopbitsCombo.getSelectedIndex(), parityCombo.getSelectedIndex(),
+            		com1.getText(), com2.getText());
         });
         
         mainPanel.add(center, BorderLayout.CENTER);
@@ -68,7 +93,8 @@ public class ChatGUI {
     }
     
     interface OnEnd{
-    	public void ended(String com1, String com2);
+    	public void ended(int baudrateIndex, int databitsIndex, int stopbitsIndex, int parityIndex, 
+    			String com1, String com2);
     }
 
     public void display() {

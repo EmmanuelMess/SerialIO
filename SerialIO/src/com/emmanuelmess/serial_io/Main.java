@@ -9,6 +9,23 @@ import jssc.SerialPortException;
 import jssc.SerialPortList;
 
 public class Main {
+	public static final int[] BAUDRATES = {110, 300, 600,
+			1200, 4800, 9600, 14400, 19200, 38400, 57600, 
+			115200, 128000, 256000};
+	public static final String[] BAUDRATES_NAMES = {"110", "300", "600",
+			"1200", "4800", "9600", "14400", "19200", "38400", "57600", 
+			"115200", "128000", "256000"};
+	
+	public static final int[] BITS = {5, 6, 7, 8};
+	public static final String[] BITS_NAMES = {"5", "6", "7", "8"};
+	
+	public static final int[] STOPBITS = {1, 2, 3};
+	public static final String[] STOPBITS_NAMES = {"1", "2", "1,5"};
+	
+	public static final int[] PARITY = {0, 1, 2, 3, 4};
+	public static final String[] PARITY_NAMES = {"NINGUNA", "PAR", "IMPAR",
+			"MARCADA", "ESPACIADA"};
+	
 	static SerialPort serialPort, serialPort1;
 	static ChatGUI c;
 	
@@ -27,13 +44,16 @@ public class Main {
 				c.error("Falló al enviar (" + e.getLocalizedMessage() + ")");
 			}
         });
-        c.preDisplay((com1, com2) -> {
+        c.preDisplay((baudrateIndex, databitsIndex, stopbitsIndex, parityIndex, 
+        		com1, com2) -> {
         	c.display();
-        	initCOMMs(com1, com2);
+        	initCOMMs(BAUDRATES[baudrateIndex], BITS[databitsIndex], 
+        			STOPBITS[stopbitsIndex], PARITY[parityIndex], com1, com2);
         });
 	}
     
-    private static void initCOMMs(String com1, String com2) {
+    private static void initCOMMs(int baudrate, int databits, int stopbits, int parity, 
+    		String com1, String com2) {
     	// getting serial ports list into the array
     	String[] portNames = SerialPortList.getPortNames();
     	        
@@ -45,10 +65,7 @@ public class Main {
 	    try {
 	        serialPort.openPort();
 	
-	        serialPort.setParams(SerialPort.BAUDRATE_9600,
-	                             SerialPort.DATABITS_8,
-	                             SerialPort.STOPBITS_1,
-	                             SerialPort.PARITY_NONE);
+	        serialPort.setParams(baudrate, databits, stopbits, parity);
 	
 	        serialPort.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | 
 	                                      SerialPort.FLOWCONTROL_RTSCTS_OUT);
@@ -60,10 +77,7 @@ public class Main {
 	    try {
 	    	serialPort1.openPort();
 	
-	    	serialPort1.setParams(SerialPort.BAUDRATE_9600,
-	                             SerialPort.DATABITS_8,
-	                             SerialPort.STOPBITS_1,
-	                             SerialPort.PARITY_NONE);
+	        serialPort.setParams(baudrate, databits, stopbits, parity);
 	
 	    	serialPort1.setFlowControlMode(SerialPort.FLOWCONTROL_RTSCTS_IN | 
 	                                      SerialPort.FLOWCONTROL_RTSCTS_OUT);
